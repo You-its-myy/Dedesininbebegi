@@ -6,9 +6,7 @@
     <title>WhatsApp Web Clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* MODERN WHATSAPP BEYAZ TEMA 
-           GitHub Pages Uyumlu CSS
-        */
+        /* MODERN WHATSAPP BEYAZ TEMA */
         :root {
             --primary: #008069;
             --bg-color: #eef1f4; /* Daha soft beyaz/gri */
@@ -25,7 +23,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #d1d7db; /* Arkaplan gri tonu */
+            background-color: #d1d7db;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -35,7 +33,6 @@
             position: relative;
         }
 
-        /* Arkaplan Yeşil Şerit */
         body::before {
             content: "";
             position: absolute;
@@ -45,11 +42,10 @@
             z-index: 0;
         }
 
-        /* Ana Uygulama Kutusu */
         .app-container {
             width: 100%;
             max-width: 1400px;
-            height: 95vh; /* Tam ekran değil çerçeveli dursun */
+            height: 95vh;
             background: var(--white);
             box-shadow: 0 17px 50px 0 rgba(11,20,26,.19), 0 12px 15px 0 rgba(11,20,26,.24);
             border-radius: 0;
@@ -216,10 +212,9 @@
             display: flex;
             flex-direction: column;
             background-color: var(--chat-bg);
-            /* WhatsApp Background Pattern */
             background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
             background-repeat: repeat;
-            opacity: 0.99; /* Pattern görünürlüğü */
+            opacity: 0.99;
             position: relative;
         }
 
@@ -326,8 +321,8 @@
                 <input type="password" id="reg-pass" placeholder="Şifre">
                 <input type="password" id="reg-pass-confirm" placeholder="Şifre Tekrar">
                 
-                <button class="btn-primary" onclick="handleRegister()">KAYIT OL</button>
-                <div class="auth-link" onclick="showScreen('login-screen')">Giriş Yap</div>
+                <button class="btn-primary" id="btn-register">KAYIT OL</button>
+                <div class="auth-link" id="link-to-login">Giriş Yap</div>
             </div>
         </div>
 
@@ -339,8 +334,8 @@
                 <input type="text" id="login-name" placeholder="Kullanıcı Adı" autocomplete="off">
                 <input type="password" id="login-pass" placeholder="Şifre">
                 
-                <button class="btn-primary" onclick="handleLogin()">GİRİŞ YAP</button>
-                <div class="auth-link" onclick="showScreen('register-screen')">Hesap Oluştur</div>
+                <button class="btn-primary" id="btn-login">GİRİŞ YAP</button>
+                <div class="auth-link" id="link-to-register">Hesap Oluştur</div>
             </div>
         </div>
 
@@ -348,10 +343,10 @@
             <div class="auth-box fade-in">
                 <h3>Profil Fotoğrafı Seç</h3>
                 <div class="profile-pic-preview" id="avatar-preview" style="background-image: url('https://cdn-icons-png.flaticon.com/512/149/149071.png');"></div>
-                <input type="file" id="file-input" accept="image/*" style="display:none" onchange="previewImage()">
+                <input type="file" id="file-input" accept="image/*" style="display:none">
                 
-                <button class="btn-primary" style="background:#54656f; margin-bottom:5px;" onclick="document.getElementById('file-input').click()">Galeriden Seç</button>
-                <button class="btn-primary" onclick="saveProfileAndStart()">DEVAM ET</button>
+                <button class="btn-primary" style="background:#54656f; margin-bottom:5px;" id="btn-select-file">Galeriden Seç</button>
+                <button class="btn-primary" id="btn-save-profile">DEVAM ET</button>
             </div>
         </div>
 
@@ -362,8 +357,8 @@
                     <img id="my-avatar" class="my-avatar" src="">
                     <span id="my-username" style="font-weight:600; font-size:16px;"></span>
                     <div>
-                        <button class="icon-btn" onclick="openUserList()" title="Yeni Sohbet"><i class="fas fa-plus"></i></button>
-                        <button class="icon-btn" onclick="logout()" title="Çıkış"><i class="fas fa-sign-out-alt"></i></button>
+                        <button class="icon-btn" id="btn-open-user-list" title="Yeni Sohbet"><i class="fas fa-plus"></i></button>
+                        <button class="icon-btn" id="btn-logout" title="Çıkış"><i class="fas fa-sign-out-alt"></i></button>
                     </div>
                 </div>
                 
@@ -394,8 +389,8 @@
                     <div class="input-area">
                         <i class="far fa-smile" style="font-size:24px; color:#54656f; cursor:pointer;"></i>
                         <i class="fas fa-paperclip" style="font-size:20px; color:#54656f; cursor:pointer;"></i>
-                        <input type="text" id="msg-input" class="type-input" placeholder="Bir mesaj yazın" onkeypress="handleEnter(event)">
-                        <button class="icon-btn" onclick="sendMessage()"><i class="fas fa-paper-plane" style="color:var(--text-secondary)"></i></button>
+                        <input type="text" id="msg-input" class="type-input" placeholder="Bir mesaj yazın">
+                        <button class="icon-btn" id="btn-send-message"><i class="fas fa-paper-plane" style="color:var(--text-secondary)"></i></button>
                     </div>
                 </div>
             </div>
@@ -407,7 +402,7 @@
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h3 style="margin:0;">Yeni Sohbet</h3>
-                <button onclick="closeUserList()" style="border:none; background:none; font-size:20px; cursor:pointer;">&times;</button>
+                <button id="btn-close-user-list" style="border:none; background:none; font-size:20px; cursor:pointer;">&times;</button>
             </div>
             <div id="all-users-list">Yükleniyor...</div>
         </div>
@@ -439,24 +434,25 @@
         let currentChatPartnerId = null;
         let currentChatId = null;
         let uploadedAvatarBase64 = null;
+        const defaultAvatarUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
         // --- AUTH İŞLEMLERİ ---
 
-        window.showScreen = (screenId) => {
+        const showScreen = (screenId) => {
             ['register-screen', 'login-screen', 'profile-screen', 'main-app'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.getElementById(screenId).classList.remove('hidden');
         };
 
-        // Durum Takibi (Login Check)
+        // Durum Takibi (Oto Login ve LocalStorage)
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // LocalStorage kontrolü yapmıyoruz, Firebase Auth otomatik olarak tarayıcı oturumunu yönetir.
                 const userRef = ref(db, 'users/' + user.uid);
                 get(userRef).then((snapshot) => {
                     if (snapshot.exists()) {
                         currentUser = snapshot.val();
-                        // Eğer avatarı yoksa profil seçmeye at
                         if (!currentUser.avatar || currentUser.avatar === "default") {
                             showScreen('profile-screen');
                         } else {
@@ -470,13 +466,14 @@
         });
 
         // KAYIT OL
-        window.handleRegister = async () => {
+        const handleRegister = async () => {
             const name = document.getElementById('reg-name').value.trim().toLowerCase();
             const surname = document.getElementById('reg-surname').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const pass = document.getElementById('reg-pass').value;
             const passConfirm = document.getElementById('reg-pass-confirm').value;
             const errBox = document.getElementById('reg-error');
+            errBox.style.display = 'none';
 
             if (!name || !email || !pass) {
                 showError(errBox, "Lütfen zorunlu alanları doldurun.");
@@ -487,7 +484,6 @@
                 return;
             }
 
-            // İsim Kontrolü
             const snapshot = await get(child(ref(db), usernames/${name}));
             if (snapshot.exists()) {
                 showError(errBox, "Bu kullanıcı adı alınmış.");
@@ -498,7 +494,6 @@
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 const uid = cred.user.uid;
 
-                // Veritabanı Kayıt
                 await set(ref(db, 'users/' + uid), {
                     uid: uid,
                     username: name,
@@ -507,12 +502,10 @@
                     avatar: "default"
                 });
                 
-                // Username mapping
                 await set(ref(db, 'usernames/' + name), { email: email });
 
-                // Login'e yönlendir (Efektli)
                 showScreen('login-screen');
-                document.getElementById('login-name').value = name; // kolaylık olsun
+                document.getElementById('login-name').value = name;
 
             } catch (error) {
                 showError(errBox, error.message);
@@ -520,15 +513,15 @@
         };
 
         // GİRİŞ YAP
-        window.handleLogin = async () => {
+        const handleLogin = async () => {
             const name = document.getElementById('login-name').value.trim().toLowerCase();
             const pass = document.getElementById('login-pass').value;
             const errBox = document.getElementById('login-error');
+            errBox.style.display = 'none';
 
             if (!name || !pass) return;
 
             try {
-                // İsimden mail bul
                 const snapshot = await get(child(ref(db), usernames/${name}));
                 if (!snapshot.exists()) {
                     showError(errBox, "Kullanıcı bulunamadı.");
@@ -537,15 +530,14 @@
                 const email = snapshot.val().email;
 
                 await signInWithEmailAndPassword(auth, email, pass);
-                // onAuthStateChanged tetiklenecek ve yönlendirecek
-
+                // onAuthStateChanged tetiklenir ve yönlendirme yapar
             } catch (error) {
                 showError(errBox, "Giriş başarısız. Şifreyi kontrol et.");
             }
         };
 
         // FOTOĞRAF YÜKLEME
-        window.previewImage = () => {
+        const previewImage = () => {
             const file = document.getElementById('file-input').files[0];
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -555,20 +547,18 @@
             if (file) reader.readAsDataURL(file);
         };
 
-        window.saveProfileAndStart = async () => {
+        const saveProfileAndStart = async () => {
             if (uploadedAvatarBase64 && auth.currentUser) {
                 await set(ref(db, users/${auth.currentUser.uid}/avatar), uploadedAvatarBase64);
-                // Güncel veriyi al ve başlat
                 const snap = await get(ref(db, users/${auth.currentUser.uid}));
                 initApp(snap.val());
             } else {
-                // Foto seçmezse default kalsın devam et
                 const snap = await get(ref(db, users/${auth.currentUser.uid}));
                 initApp(snap.val());
             }
         };
 
-        window.logout = () => {
+        const logout = () => {
             signOut(auth);
             location.reload();
         };
@@ -584,14 +574,12 @@
             currentUser = user;
             showScreen('main-app');
             
-            document.getElementById('my-avatar').src = user.avatar === 'default' ? 'https://cdn-icons-png.flaticon.com/512/149/149071.png' : user.avatar;
+            document.getElementById('my-avatar').src = user.avatar === 'default' ? defaultAvatarUrl : user.avatar;
             document.getElementById('my-username').innerText = user.username;
-
-            loadChatHistory();
         }
 
         // Kullanıcı Listesi Modalı
-        window.openUserList = () => {
+        const openUserList = () => {
             const modal = document.getElementById('user-modal');
             const list = document.getElementById('all-users-list');
             modal.style.display = 'flex';
@@ -609,58 +597,55 @@
                             div.style.display = "flex";
                             div.style.alignItems = "center";
                             
-                            const imgUrl = (u.avatar && u.avatar !== 'default') ? u.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                            const imgUrl = (u.avatar && u.avatar !== 'default') ? u.avatar : defaultAvatarUrl;
                             
                             div.innerHTML = `
                                 <img src="${imgUrl}" style="width:40px; height:40px; border-radius:50%; margin-right:10px; object-fit:cover;">
                                 <span style="font-weight:bold;">${u.username}</span>
                             `;
-                            div.onclick = () => startChat(u);
+                            div.addEventListener('click', () => startChat(u));
                             list.appendChild(div);
                         }
                     });
+                } else {
+                     list.innerHTML = 'Başka kullanıcı bulunmuyor.';
                 }
             });
         };
 
-        window.closeUserList = () => {
+        const closeUserList = () => {
             document.getElementById('user-modal').style.display = 'none';
         };
 
         // Sohbet Başlat
-        window.startChat = (targetUser) => {
+        const startChat = (targetUser) => {
             closeUserList();
             currentChatPartnerId = targetUser.uid;
             
-            // Chat ID oluştur (Alfabetik sıraya göre unique ID)
             const uid1 = currentUser.uid;
             const uid2 = targetUser.uid;
             currentChatId = uid1 < uid2 ? ${uid1}_${uid2} : ${uid2}_${uid1};
 
-            // Arayüzü ayarla
             document.getElementById('empty-state').classList.add('hidden');
             document.getElementById('active-chat-container').classList.remove('hidden');
             
-            const targetAvatar = (targetUser.avatar && targetUser.avatar !== 'default') ? targetUser.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            const targetAvatar = (targetUser.avatar && targetUser.avatar !== 'default') ? targetUser.avatar : defaultAvatarUrl;
             document.getElementById('header-avatar').src = targetAvatar;
             document.getElementById('header-name').innerText = targetUser.username;
 
-            // Sol listeye ekle (Görsel olarak)
             addToSidebar(targetUser);
 
-            // Mesajları dinle
             listenMessages(currentChatId);
         };
 
         function addToSidebar(user) {
             const list = document.getElementById('chat-list-container');
-            // Eğer zaten varsa ekleme
             if (document.getElementById(chat-link-${user.uid})) return;
 
             const div = document.createElement('div');
             div.id = chat-link-${user.uid};
             div.className = 'chat-item';
-            const imgUrl = (user.avatar && user.avatar !== 'default') ? user.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            const imgUrl = (user.avatar && user.avatar !== 'default') ? user.avatar : defaultAvatarUrl;
             
             div.innerHTML = `
                 <img src="${imgUrl}">
@@ -669,7 +654,7 @@
                     <div class="chat-status">Sohbet başladı</div>
                 </div>
             `;
-            div.onclick = () => startChat(user);
+            div.addEventListener('click', () => startChat(user));
             list.prepend(div);
         }
 
@@ -688,7 +673,6 @@
                         const div = document.createElement('div');
                         div.className = message-box ${isMe ? 'msg-sent' : 'msg-received'};
                         
-                        // Saat formatı
                         const date = new Date(msg.timestamp);
                         const timeStr = date.getHours().toString().padStart(2,'0') + ":" + date.getMinutes().toString().padStart(2,'0');
 
@@ -704,7 +688,7 @@
         }
 
         // Mesaj Gönder
-        window.sendMessage = () => {
+        const sendMessage = () => {
             const input = document.getElementById('msg-input');
             const text = input.value.trim();
             if (!text || !currentChatId) return;
@@ -717,16 +701,37 @@
             input.value = '';
         };
 
-        window.handleEnter = (e) => {
-            if(e.key === 'Enter') sendMessage();
-        };
+        // Tuş Dinleyicileri (Düzeltme Burası)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Register Ekranı
+            document.getElementById('btn-register').addEventListener('click', handleRegister);
+            document.getElementById('link-to-login').addEventListener('click', () => showScreen('login-screen'));
+            
+            // Login Ekranı
+            document.getElementById('btn-login').addEventListener('click', handleLogin);
+            document.getElementById('link-to-register').addEventListener('click', () => showScreen('register-screen'));
+            document.getElementById('login-pass').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
 
-        // Geçmiş sohbetleri yüklemek için basit bir mantık (Demo için)
-        // Gerçek uygulamada "user-chats" düğümü oluşturulup oradan çekilir.
-        // Burada basitlik adına "users" çekip listeliyoruz şimdilik.
-        function loadChatHistory() {
-            // Şimdilik boş bırakıyoruz, kullanıcı + butonundan ekliyor.
-        }
+            // Profil Ekranı
+            document.getElementById('file-input').addEventListener('change', previewImage);
+            document.getElementById('btn-select-file').addEventListener('click', () => document.getElementById('file-input').click());
+            document.getElementById('btn-save-profile').addEventListener('click', saveProfileAndStart);
+            
+            // Main Ekran
+            document.getElementById('btn-open-user-list').addEventListener('click', openUserList);
+            document.getElementById('btn-logout').addEventListener('click', logout);
+            
+            // Mesajlaşma
+            document.getElementById('btn-send-message').addEventListener('click', sendMessage);
+            document.getElementById('msg-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            // Modal
+            document.getElementById('btn-close-user-list').addEventListener('click', closeUserList);
+        });
 
     </script>
 </body>
