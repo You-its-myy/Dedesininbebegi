@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Uygulaması</title>
+    <style>
+        /* MODERN & ŞIK BEYAZ TEMA (WHATSAPP TARZI) */
+        :root {
+            --primary: #00a884;
+            --bg-color: #f0f2f5;
+            --white: #ffffff;
+            --gray: #e9edef;
+            --text-dark: #111b21;
+            --text-light: #54656f;
+            --message-out: #d9fdd3;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Konteyner Yapısı */
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 95vh;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* EK OLARAK: AUTH EKRANLARI (LOGIN/REGISTER) */
+        .auth-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease;
+        }
+
+        .auth-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 350px;
+            text-align: center;
+        }
+
+        .auth-box h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #008f6f;
+        }
+
+        .link {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        /* PROFİL SEÇME EKRANI */
+        .profile-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ddd;
+            margin-bottom: 15px;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid var(--primary);
+        }
+
+        /* ANA SOHBET EKRANI */
+        .sidebar {
+            width: 30%;
+            border-right: 1px solid var(--gray);
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+        }
+
+        .header {
+            padding: 15px;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .add-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .search-bar {
+            padding: 10px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            background: var(--bg-color);
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--gray);
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover {
+            background: var(--bg-color);
+        }
+
+        .chat-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .chat-info h4 {
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .chat-info p {
+            margin: 5px 0 0;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .chat-area {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            background: #efe7dd; /* WhatsApp default wallpaper color */
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            opacity: 0.9;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--gray);
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 60%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: var(--message-out);
+            border-top-right-radius: 0;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: var(--white);
+            border-top-left-radius: 0;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #999;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .message-input {
+            padding: 15px;
+            background: var(--bg-color);
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        .fade-out { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        .fade-in { opacity: 1; transform: scale(1); }
+
+        /* Kullanıcı Listesi Modalı */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+        .modal-content {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .user-list-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--gray);
+            cursor: pointer;
+        }
+        .user-list-item:hover { background: var(--gray); }
+        .user-list-item img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="register-screen" class="auth-screen">
+            <div class="auth-box">
+                <h2>Kayıt Ol</h2>
+                <p class="error-msg" id="reg-error"></p>
+                
+                <div class="input-group">
+                    <input type="text" id="reg-name" placeholder="İsim (Kullanıcı Adı)*" required>
+                    <small style="font-size:10px; color:#666">Bu isimle giriş yapacaksınız (Benzersiz olmalı)</small>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="reg-surname" placeholder="Soy İsim (İsteğe Bağlı)">
+                </div>
+                <div class="input-group">
+                    <input type="email" id="reg-email" placeholder="G-mail*" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-pass" placeholder="Şifre*" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-pass-confirm" placeholder="Şifreyi Tekrar Giriniz*" required>
+                </div>
+                <button class="btn" onclick="handleRegister()">Kayıt Ol & Devam Et</button>
+                <div class="link" onclick="switchScreen('register-screen', 'login-screen')">Zaten hesabın var mı? Giriş Yap</div>
+            </div>
+        </div>
+
+        <div id="login-screen" class="auth-screen hidden">
+            <div class="auth-box">
+                <h2>Giriş Yap</h2>
+                <p class="error-msg" id="login-error"></p>
+                <div class="input-group">
+                    <input type="text" id="login-name" placeholder="İsminizi Tekrar Yazın (Kullanıcı Adı)" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-pass" placeholder="Şifreniz" required>
+                </div>
+                <button class="btn" onclick="handleLogin()">Giriş Yap</button>
+                <div class="link" onclick="switchScreen('login-screen', 'register-screen')">Hesabın yok mu? Kayıt Ol</div>
+            </div>
+        </div>
+
+        <div id="profile-screen" class="auth-screen hidden">
+            <div class="auth-box">
+                <h2>Profil Fotoğrafı</h2>
+                <div class="profile-upload">
+                    <div class="avatar-preview" id="avatar-preview"></div>
+                    <input type="file" id="file-input" accept="image/*" onchange="previewImage()">
+                    <button class="btn" onclick="saveProfileAndStart()">Devam Et</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-screen" class="hidden" style="display:flex; width:100%; height:100%;">
+            <div class="sidebar">
+                <div class="header">
+                    <div class="user-profile">
+                        <img id="my-avatar" src="" alt="Ben">
+                        <span id="my-username" style="font-weight:bold;"></span>
+                    </div>
+                    <button class="add-btn" onclick="openUserList()">+</button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Sohbet ara veya yeni başlat">
+                </div>
+                <div class="chat-list" id="chat-list">
+                    <div style="padding:20px; text-align:center; color:#999;">Henüz sohbet yok. + tuşuna bas.</div>
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div class="chat-header" id="chat-header" style="display:none;">
+                    <img id="active-chat-img" src="" alt="">
+                    <h4 id="active-chat-name">Kullanıcı Adı</h4>
+                </div>
+                
+                <div class="messages" id="messages-area">
+                    </div>
+
+                <div class="message-input" id="input-area" style="display:none;">
+                    <input type="text" id="msg-text" placeholder="Bir mesaj yazın..." onkeypress="handleKeyPress(event)">
+                    <button class="btn" style="width: auto;" onclick="sendMessage()">Gönder</button>
+                </div>
+                
+                <div id="empty-state" style="flex:1; display:flex; justify-content:center; align-items:center; flex-direction:column; color:#555;">
+                    <h2>WhatsApp Web Clone</h2>
+                    <p>Sohbet etmek için soldan bir kişi seçin.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Kişi Seç</h3>
+            <div id="user-list-container">Yükleniyor...</div>
+            <button class="btn" style="background:#ccc; margin-top:10px; color:#333" onclick="closeUserList()">Kapat</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, child, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA49KR-d9hN6QXXcvZ68CfYLpMulad8p50",
+            authDomain: "multiplayer-chat-552f7.firebaseapp.com",
+            databaseURL: "https://multiplayer-chat-552f7-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "multiplayer-chat-552f7",
+            storageBucket: "multiplayer-chat-552f7.firebasestorage.app",
+            messagingSenderId: "658594907764",
+            appId: "1:658594907764:web:18ca661bd9dd9f504df321",
+            measurementId: "G-9JMN9DMG82"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let currentUserData = null;
+        let selectedChatUser = null;
+        let selectedChatId = null;
+
+        // GLOBAL HELPER FUNCTIONS
+        window.switchScreen = (fromId, toId) => {
+            const fromEl = document.getElementById(fromId);
+            const toEl = document.getElementById(toId);
+            
+            fromEl.classList.add('fade-out');
+            setTimeout(() => {
+                fromEl.classList.add('hidden');
+                fromEl.classList.remove('fade-out');
+                
+                toEl.classList.remove('hidden');
+                toEl.classList.add('fade-in');
+                setTimeout(() => toEl.classList.remove('fade-in'), 500);
+            }, 500);
+        };
+
+        // ---------------- AUTHENTICATION ----------------
+
+        // 1. Durum Kontrolü (Oto Login)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Kullanıcı giriş yapmış, verisini çek
+                const userRef = ref(db, 'users/' + user.uid);
+                get(userRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        currentUserData = snapshot.val();
+                        initMainScreen();
+                        
+                        // Eğer zaten giriş yapmışsa direkt main'e at
+                        document.getElementById('register-screen').classList.add('hidden');
+                        document.getElementById('login-screen').classList.add('hidden');
+                        document.getElementById('profile-screen').classList.add('hidden');
+                        document.getElementById('main-screen').classList.remove('hidden');
+                    } else {
+                        // Auth var ama DB kaydı yoksa (nadir durum)
+                        auth.signOut();
+                    }
+                });
+            }
+        });
+
+        // 2. REGISTER
+        window.handleRegister = async () => {
+            const name = document.getElementById('reg-name').value.trim().toLowerCase(); // Kullanıcı adı benzersiz kontrolü için lowercase
+            const surname = document.getElementById('reg-surname').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const confirmPass = document.getElementById('reg-pass-confirm').value;
+            const errorP = document.getElementById('reg-error');
+
+            if(!name || !email || !pass) {
+                errorP.innerText = "Lütfen zorunlu alanları doldurun.";
+                errorP.style.display = 'block';
+                return;
+            }
+
+            if (pass !== confirmPass) {
+                errorP.innerText = "Hata: Şifreler eşleşmiyor!";
+                errorP.style.display = 'block';
+                return;
+            }
+
+            // Benzersiz kullanıcı adı kontrolü
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, usernames/${name}));
+
+            if (snapshot.exists()) {
+                errorP.innerText = "Bu kullanıcı adı (isim) zaten alınmış. Başka bir tane seçin.";
+                errorP.style.display = 'block';
+                return;
+            }
+
+            // Firebase Create User
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // Veritabanına kaydet
+                const userData = {
+                    uid: user.uid,
+                    username: name,
+                    surname: surname,
+                    email: email,
+                    avatar: "https://cdn-icons-png.flaticon.com/512/149/149071.png" // Default avatar
+                };
+
+                // Users node'una kaydet
+                await set(ref(db, 'users/' + user.uid), userData);
+                // Username mapping kaydet (Login için gerekli)
+                await set(ref(db, 'usernames/' + name), { email: email });
+
+                // Efektle Login ekranına at (İsteğin üzerine)
+                switchScreen('register-screen', 'login-screen');
+
+            } catch (error) {
+                errorP.innerText = "Kayıt Hatası: " + error.message;
+                errorP.style.display = 'block';
+            }
+        };
+
+        // 3. LOGIN (İsim ile giriş)
+        window.handleLogin = async () => {
+            const name = document.getElementById('login-name').value.trim().toLowerCase();
+            const pass = document.getElementById('login-pass').value;
+            const errorP = document.getElementById('login-error');
+
+            if (!name || !pass) {
+                errorP.innerText = "Alanları doldurun.";
+                errorP.style.display = 'block';
+                return;
+            }
+
+            try {
+                // İsme ait emaili bul
+                const dbRef = ref(db);
+                const snapshot = await get(child(dbRef, usernames/${name}));
+
+                if (!snapshot.exists()) {
+                    errorP.innerText = "Bu isimle kayıtlı kullanıcı bulunamadı.";
+                    errorP.style.display = 'block';
+                    return;
+                }
+
+                const realEmail = snapshot.val().email;
+
+                // Giriş yap
+                await signInWithEmailAndPassword(auth, realEmail, pass);
+                
+                // Başarılı ise Profil seçme ekranına at
+                switchScreen('login-screen', 'profile-screen');
+
+            } catch (error) {
+                errorP.innerText = "Giriş Hatası: Şifre yanlış olabilir.";
+                errorP.style.display = 'block';
+            }
+        };
+
+        // 4. PROFILE IMAGE
+        let selectedImageBase64 = null;
+        window.previewImage = () => {
+            const file = document.getElementById('file-input').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                selectedImageBase64 = reader.result;
+                document.getElementById('avatar-preview').style.backgroundImage = url(${selectedImageBase64});
+            };
+            if (file) reader.readAsDataURL(file);
+        };
+
+        window.saveProfileAndStart = async () => {
+            if (selectedImageBase64 && auth.currentUser) {
+                // Resmi DB'ye kaydet (Storage yerine base64 string olarak DB'ye atıyorum pratiklik için)
+                // UYARI: Büyük resimlerde performans düşebilir, gerçek projede Firebase Storage kullan.
+                await set(ref(db, users/${auth.currentUser.uid}/avatar), selectedImageBase64);
+            }
+            switchScreen('profile-screen', 'main-screen');
+            initMainScreen();
+        };
+
+        // ---------------- MAIN APP LOGIC ----------------
+
+        function initMainScreen() {
+            // Profilimi sol üste koy
+            const userRef = ref(db, 'users/' + auth.currentUser.uid);
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                document.getElementById('my-avatar').src = data.avatar;
+                document.getElementById('my-username').innerText = data.username;
+                currentUserData = data;
+            });
+            
+            loadMyChats();
+        }
+
+        function loadMyChats() {
+            // Şimdilik basitçe tüm kullanıcıları + listesinde göstereceğiz.
+            // Sol liste chatleştikçe dolmalı ama bu demo için manuel seçim yapacağız.
+        }
+
+        // Kullanıcı Listesini Aç (+)
+        window.openUserList = () => {
+            const modal = document.getElementById('user-modal');
+            const listContainer = document.getElementById('user-list-container');
+            modal.classList.remove('hidden');
+            listContainer.innerHTML = 'Yükleniyor...';
+
+            const usersRef = ref(db, 'users');
+            get(usersRef).then((snapshot) => {
+                listContainer.innerHTML = '';
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    Object.values(users).forEach(user => {
+                        if (user.uid !== auth.currentUser.uid) { // Kendimi gösterme
+                            const div = document.createElement('div');
+                            div.className = 'user-list-item';
+                            div.innerHTML = <img src="${user.avatar}"><span>${user.username}</span>;
+                            div.onclick = () => startChat(user);
+                            listContainer.appendChild(div);
+                        }
+                    });
+                } else {
+                    listContainer.innerHTML = 'Başka kullanıcı yok.';
+                }
+            });
+        };
+
+        window.closeUserList = () => {
+            document.getElementById('user-modal').classList.add('hidden');
+        };
+
+        // Chat Başlat
+        window.startChat = (targetUser) => {
+            closeUserList();
+            selectedChatUser = targetUser;
+            
+            // UI Güncelle
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('chat-header').style.display = 'flex';
+            document.getElementById('input-area').style.display = 'flex';
+            
+            document.getElementById('active-chat-img').src = targetUser.avatar;
+            document.getElementById('active-chat-name').innerText = targetUser.username;
+
+            // Chat ID oluştur (İki ID'yi sıralayıp birleştirerek unique oda yapıyoruz)
+            const myId = auth.currentUser.uid;
+            const otherId = targetUser.uid;
+            selectedChatId = myId < otherId ? ${myId}_${otherId} : ${otherId}_${myId};
+
+            // Sol listeye de ekle (Görsel olarak)
+            const chatList = document.getElementById('chat-list');
+            // Basit kontrol: zaten varsa ekleme
+            if (!document.getElementById(chat-item-${otherId})) {
+                const item = document.createElement('div');
+                item.className = 'chat-item';
+                item.id = chat-item-${otherId};
+                item.innerHTML = `
+                    <img src="${targetUser.avatar}">
+                    <div class="chat-info">
+                        <h4>${targetUser.username}</h4>
+                        <p>Sohbet başladı</p>
+                    </div>
+                `;
+                item.onclick = () => startChat(targetUser);
+                chatList.prepend(item);
+            }
+
+            listenMessages(selectedChatId);
+        };
+
+        // Mesajları Dinle
+        function listenMessages(chatId) {
+            const messagesRef = ref(db, 'messages/' + chatId);
+            const messagesArea = document.getElementById('messages-area');
+            messagesArea.innerHTML = ''; // Önce temizle
+
+            onValue(messagesRef, (snapshot) => {
+                messagesArea.innerHTML = '';
+                const msgs = snapshot.val();
+                if (msgs) {
+                    Object.values(msgs).forEach(msg => {
+                        const div = document.createElement('div');
+                        const isMe = msg.sender === auth.currentUser.uid;
+                        div.className = message ${isMe ? 'sent' : 'received'};
+                        div.innerHTML = `
+                            ${msg.text}
+                            <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                        `;
+                        messagesArea.appendChild(div);
+                    });
+                    // En alta kaydır
+                    messagesArea.scrollTop = messagesArea.scrollHeight;
+                }
+            });
+        }
+
+        // Mesaj Gönder
+        window.sendMessage = () => {
+            const input = document.getElementById('msg-text');
+            const text = input.value.trim();
+            if (!text || !selectedChatId) return;
+
+            const messagesRef = ref(db, 'messages/' + selectedChatId);
+            push(messagesRef, {
+                text: text,
+                sender: auth.currentUser.uid,
+                timestamp: serverTimestamp()
+            });
+
+            input.value = '';
+        };
+
+        window.handleKeyPress = (e) => {
+            if (e.key === 'Enter') sendMessage();
+        };
+
+    </script>
+</body>
+</html>
